@@ -7,6 +7,8 @@ import main.tables.Journal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +25,12 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public Optional<Journal> findJournal(Integer id) {
-        return journalRepository.findById(id);
+    public Journal findJournal(Integer id) {
+        Optional<Journal> journal = journalRepository.findById(id);
+        if (journal.isEmpty()) {
+            throw new EntityNotFoundException("Journal not found");
+        }
+        return journal.get();
     }
 
     @Override
@@ -38,6 +44,10 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
+    public Journal addJournal(Journal journal) {
+        return journalRepository.save(journal);
+    }
+    @Override
     public int updateDateEndById(Instant dateEnd, Integer id) {
         return journalRepository.updateDateEndById(dateEnd, id);
     }
@@ -49,11 +59,17 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public int deleteByClient(Clients client) {
+        if (!journalRepository.existsByClient(client)) {
+            throw new EntityExistsException("There is no such client in the journal");
+        }
         return journalRepository.deleteByClient(client);
     }
 
     @Override
-    public void deleteByIdInJournal(Integer id) {
+    public void deleteJournalById(Integer id) {
+        if (!journalRepository.existsById(id)) {
+            throw new EntityExistsException("Journal with this id: " + id + ",does not exist");
+        }
         journalRepository.deleteById(id);
     }
 }

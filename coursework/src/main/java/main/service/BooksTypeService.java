@@ -1,5 +1,6 @@
 package main.service;
 
+import main.tables.Books;
 import main.tables.BooksType;
 
 import java.util.List;
@@ -9,9 +10,11 @@ public interface BooksTypeService {
 
     List<BooksType> listBooks();
 
-    Optional<BooksType> findBooks(Integer id);
+    BooksType findBooksType(Integer id);
 
-    BooksType findByName(String name);
+    List<BooksType> findByName(String name);
+
+    BooksType addBookType(BooksType book);
 
     int updateDayCountById(Integer dayCount, Integer id);
 

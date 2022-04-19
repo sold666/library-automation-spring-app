@@ -3,7 +3,6 @@ package main.service;
 import main.tables.Clients;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ClientsService {
 
@@ -11,7 +10,7 @@ public interface ClientsService {
 
     List<Clients> findClientsWhoTakeBook(String bookName);
 
-    Optional<Clients> findClientById(Integer id);
+    Clients findClientById(Integer id);
 
     Clients findClientByFullName(String firstName, String lastName, String patherName);
 
@@ -23,5 +22,7 @@ public interface ClientsService {
 
     Integer clientNumOfBooks(String firstName, String lastName, String patherName);
 
-    void deleteById(Integer integer);
+    Clients addClients(Clients client);
+
+    void deleteById(Integer id);
 }

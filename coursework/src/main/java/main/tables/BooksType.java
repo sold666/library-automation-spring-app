@@ -1,5 +1,9 @@
 package main.tables;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -35,6 +39,14 @@ public class BooksType {
         this.cnt = cnt;
         this.fine = fine;
         this.dayCount = dayCount;
+    }
+
+    public Collection<Books> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Collection<Books> books) {
+        this.books = books;
     }
 
     public Integer getDayCount() {

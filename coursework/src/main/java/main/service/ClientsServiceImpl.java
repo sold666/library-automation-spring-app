@@ -5,6 +5,8 @@ import main.tables.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +22,12 @@ public class ClientsServiceImpl implements ClientsService {
     }
 
     @Override
-    public Optional<Clients> findClientById(Integer id) {
-        return clientsRepository.findById(id);
+    public Clients findClientById(Integer id) {
+        Optional<Clients> clients = clientsRepository.findById(id);
+        if (clients.isEmpty()) {
+            throw new EntityNotFoundException("Clients not found");
+        }
+        return clients.get();
     }
 
     @Override
@@ -55,7 +61,15 @@ public class ClientsServiceImpl implements ClientsService {
     }
 
     @Override
-    public void deleteById(Integer integer) {
-        clientsRepository.deleteById(integer);
+    public Clients addClients(Clients clients) {
+        return clientsRepository.save(clients);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        if (!clientsRepository.existsById(id)) {
+            throw new EntityExistsException("There is no such client");
+        }
+        clientsRepository.deleteById(id);
     }
 }

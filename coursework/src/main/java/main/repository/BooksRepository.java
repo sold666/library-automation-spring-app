@@ -17,7 +17,7 @@ public interface BooksRepository extends CrudRepository<Books, Integer> {
     List<Books> findClientBooks(String firstName, String lastName, String patherName);
 
     @Query("select b from books b where b.name = ?1")
-    Books findByName(String name);
+    List<Books> findByName(String name);
 
     @Transactional
     @Modifying

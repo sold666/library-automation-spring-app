@@ -3,17 +3,18 @@ package main.service;
 import main.tables.Books;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BooksService {
 
     List<Books> listBooks();
 
-    Optional<Books> findBooks(Integer id);
+    Books findBooks(Integer id);
 
-    Books findByName(String name);
+    List<Books> findByName(String name);
 
     List<Books> findClientBooks(String firstName, String lastName, String patherName);
+
+    Books addBook(Books book);
 
     int updateCntById(Integer cnt, Integer id);
 

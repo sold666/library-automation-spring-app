@@ -1,5 +1,9 @@
 package main.tables;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -17,11 +21,11 @@ public class Books {
     @Column(name = "cnt")
     private Integer cnt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "type_id")
     private BooksType type;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
     private Collection<Journal> journals;
 
     public Books() {

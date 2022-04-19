@@ -1,5 +1,7 @@
 package main.tables;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -26,7 +28,7 @@ public class Clients {
     @Column(name = "passport_num", length = 20)
     private String passportNum;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
     private Collection<Journal> journals;
 
     public Clients() {

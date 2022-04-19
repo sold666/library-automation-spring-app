@@ -1,10 +1,13 @@
 package main.service;
 
 import main.repository.BooksTypeRepository;
+import main.tables.Books;
 import main.tables.BooksType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +23,16 @@ public class BooksTypeServiceImpl implements BooksTypeService {
     }
 
     @Override
-    public Optional<BooksType> findBooks(Integer id) {
-        return booksTypeRepository.findById(id);
+    public BooksType findBooksType(Integer id) {
+        Optional<BooksType> booksType = booksTypeRepository.findById(id);
+        if (booksType.isEmpty()) {
+            throw new EntityNotFoundException("Books type not found");
+        }
+        return booksType.get();
     }
 
     @Override
-    public BooksType findByName(String name) {
+    public List<BooksType> findByName(String name) {
         return booksTypeRepository.findByName(name);
     }
 
@@ -35,12 +42,25 @@ public class BooksTypeServiceImpl implements BooksTypeService {
     }
 
     @Override
+    public BooksType addBookType(BooksType type) {
+        return booksTypeRepository.save(type);
+    }
+
+    @Override
     public int updateCntById(Integer cnt, Integer id) {
         return booksTypeRepository.updateCntById(cnt, id);
     }
 
     @Override
     public int deleteByName(String name) {
-        return booksTypeRepository.deleteByName(name);
+        List<BooksType> booksTypesList = booksTypeRepository.findByName(name);
+        int count = 0;
+        for (var type:booksTypesList) {
+            if(type.getBooks().isEmpty()) {
+                count++;
+                booksTypeRepository.deleteById(type.getId());
+            }
+        }
+        return count;
     }
 }

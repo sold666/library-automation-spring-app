@@ -12,7 +12,7 @@ import java.util.List;
 public interface BooksTypeRepository extends CrudRepository<BooksType, Integer> {
 
     @Query("select b from books_types b where b.name = ?1")
-    BooksType findByName(String name);
+    List<BooksType> findByName(String name);
 
     @Transactional
     @Modifying
