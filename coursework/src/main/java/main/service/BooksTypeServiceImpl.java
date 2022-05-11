@@ -1,12 +1,10 @@
 package main.service;
 
 import main.repository.BooksTypeRepository;
-import main.tables.Books;
 import main.tables.BooksType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;

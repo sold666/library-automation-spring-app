@@ -1,8 +1,7 @@
 package main.tables;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -15,12 +14,10 @@ public class Journal {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @JsonIgnoreProperties("journals")
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Books book;
 
-    @JsonIgnoreProperties("journals")
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Clients client;

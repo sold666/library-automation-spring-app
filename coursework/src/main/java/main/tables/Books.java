@@ -1,8 +1,6 @@
 package main.tables;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -25,6 +23,7 @@ public class Books {
     @JoinColumn(name = "type_id")
     private BooksType type;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
     private Collection<Journal> journals;
 

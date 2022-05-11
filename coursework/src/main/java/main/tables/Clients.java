@@ -1,6 +1,7 @@
 package main.tables;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -28,6 +29,7 @@ public class Clients {
     @Column(name = "passport_num", length = 20)
     private String passportNum;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
     private Collection<Journal> journals;
 

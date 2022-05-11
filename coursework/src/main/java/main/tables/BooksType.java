@@ -1,8 +1,6 @@
 package main.tables;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -27,6 +25,7 @@ public class BooksType {
     @Column(name = "day_count")
     private Integer dayCount;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "type")
     private Collection<Books> books;
 
