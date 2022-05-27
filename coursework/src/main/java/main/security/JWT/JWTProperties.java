@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class JWTProperties {
 
     private String secretKey = "verySecretKey";
-    private long validityMS = 180000;
+    private long validityMS = 18000000;
 
     public String getSecretKey() {
         return secretKey;

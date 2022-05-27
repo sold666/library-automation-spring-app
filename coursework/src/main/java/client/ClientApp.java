@@ -2,6 +2,7 @@ package client;
 
 import java.util.Scanner;
 
+import io.jsonwebtoken.JwtException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.simple.JSONObject;
@@ -10,9 +11,14 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
+
 public class ClientApp {
+
     public static void main(String[] args) throws ParseException {
         Scanner in = new Scanner(System.in);
         String token = "";
@@ -21,10 +27,10 @@ public class ClientApp {
             System.out.print("Enter a request: ");
             String str = in.nextLine();
 
-            try{
+            try {
                 if (str.equals(("help"))) {
                     System.out.print("""
-                            
+                                                        
                             sign_in - authorization
                             ----------------------------
                             journals - find all journals
@@ -61,7 +67,7 @@ public class ClientApp {
                             update_book_cnt - update count of book
                             add_book - add book type
                             delete_book - delete book type by name
-                            
+                                                        
                             """
                     );
                 }
@@ -84,7 +90,7 @@ public class ClientApp {
                     Object obj = new JSONParser().parse(responseEntity.getBody());
                     JSONObject jo = (JSONObject) obj;
                     token = (String) jo.get("token");
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Authentication passed");
                     }
                 }
@@ -96,7 +102,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -109,7 +115,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -122,7 +128,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -135,7 +141,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -161,8 +167,6 @@ public class ClientApp {
                     String day_count = in.nextLine();
 
                     System.out.print("-Information about client-\n");
-                    System.out.print("Enter id: ");
-                    String client_id = in.nextLine();
                     System.out.print("Enter first name: ");
                     String first_name = in.nextLine();
                     System.out.print("Enter last name: ");
@@ -181,7 +185,6 @@ public class ClientApp {
                     System.out.print("Enter date reg: ");
                     String date_reg = in.nextLine();
 
-
                     RestTemplate restTemplate = new RestTemplate();
                     String url = "http://localhost:8080/jc/add journal";
                     HttpHeaders headers = new HttpHeaders();
@@ -192,27 +195,31 @@ public class ClientApp {
                             "\"name\": \"" + name + "\",\n" +
                             "\"cnt\": \"" + book_count + "\",\n" +
                             "\"type\":" + "{\n" +
-                                "\"id\": \"" + book_type_id + "\",\n" +
-                                "\"name\": \"" + type_name + "\",\n" +
-                                "\"cnt\": \"" + count + "\",\n" +
-                                "\"fine\": \"" + fine + "\",\n" +
-                                "\"dayCount\": \"" + day_count + "\"\n" + "}\n"+
+                            "\"id\": \"" + book_type_id + "\",\n" +
+                            "\"name\": \"" + type_name + "\",\n" +
+                            "\"cnt\": \"" + count + "\",\n" +
+                            "\"fine\": \"" + fine + "\",\n" +
+                            "\"dayCount\": \"" + day_count + "\"\n" + "}\n" +
                             "},\n" +
                             "\"client\":" + "{\n" +
-                                    "\"id\": \"" + client_id + "\",\n" +
-                                    "\"firstName\": \"" + first_name + "\",\n" +
-                                    "\"lastName\": \"" + last_name + "\",\n" +
-                                    "\"patherName\": \"" + father_name + "\",\n" +
-                                    "\"passportSeria\": \"" + passport_seria + "\",\n" +
-                                    "\"passportNum\": \"" + passport_number + "\"\n" +
-                                    "},\n" +
+                            "\"firstName\": \"" + first_name + "\",\n" +
+                            "\"lastName\": \"" + last_name + "\",\n" +
+                            "\"patherName\": \"" + father_name + "\",\n" +
+                            "\"passportSeria\": \"" + passport_seria + "\",\n" +
+                            "\"passportNum\": \"" + passport_number + "\"\n" +
+                            "},\n" +
                             "\"dateBeg\": " + date_beg + ",\n" +
                             "\"dateEnd\": " + date_end + ",\n" +
-                            "\"dateReg\": " + date_reg  + "\n" + "}", headers);
+                            "\"dateReg\": " + date_reg + "\n" + "}", headers);
 
-                    ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
-                        System.out.println("Successfully added");
+                    try {
+                        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
+                        if (responseEntity.getStatusCode().toString().equals("200 OK")) {
+                            System.out.println("Successfully added");
+                        }
+                    } catch (HttpServerErrorException.InternalServerError ignored ) {
+                    } catch (HttpClientErrorException e) {
+                        System.out.println("Not added");
                     }
                 }
                 if (str.equals("update_date_journal")) {
@@ -222,15 +229,15 @@ public class ClientApp {
                     String date = in.nextLine();
 
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/jc/update/"+ id + "/date?dateEnd=" + date;
+                    String url = "http://localhost:8080/jc/update/" + id + "/date?dateEnd=" + date;
                     CloseableHttpClient httpClient = HttpClientBuilder.create().build();
                     restTemplate.setRequestFactory(new
                             HttpComponentsClientHttpRequestFactory(httpClient));
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
-                    ResponseEntity<String> responseEntity=restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully updated");
                     }
                 }
@@ -243,7 +250,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("The journal has been deleted successfully");
                     }
                 }
@@ -256,7 +263,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("The journal has been deleted successfully");
                     }
                 }
@@ -268,7 +275,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -281,7 +288,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -293,13 +300,13 @@ public class ClientApp {
                     System.out.print("Enter father name: ");
                     String father_name = in.nextLine();
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/cc/full name" + "?firstname="+ first_name + "&lastname=" + last_name
-                            +"&pathername=" + father_name;
+                    String url = "http://localhost:8080/cc/full name" + "?firstname=" + first_name + "&lastname=" + last_name
+                            + "&pathername=" + father_name;
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println(responseEntity.getBody());
                     }
                 }
@@ -311,8 +318,8 @@ public class ClientApp {
                     System.out.print("Enter father name: ");
                     String father_name = in.nextLine();
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/cc/full name/fine" + "?firstname="+ first_name + "&lastname=" + last_name
-                            +"&pathername=" + father_name;
+                    String url = "http://localhost:8080/cc/full name/fine" + "?firstname=" + first_name + "&lastname=" + last_name
+                            + "&pathername=" + father_name;
                     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
                     System.out.println(responseEntity.getBody());
                 }
@@ -324,8 +331,8 @@ public class ClientApp {
                     System.out.print("Enter father name: ");
                     String father_name = in.nextLine();
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/cc/full name/days" + "?firstname="+ first_name + "&lastname=" + last_name
-                            +"&pathername=" + father_name;
+                    String url = "http://localhost:8080/cc/full name/days" + "?firstname=" + first_name + "&lastname=" + last_name
+                            + "&pathername=" + father_name;
                     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
                     System.out.println(responseEntity.getBody());
                 }
@@ -337,8 +344,8 @@ public class ClientApp {
                     System.out.print("Enter father name: ");
                     String father_name = in.nextLine();
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/cc/full name/num" + "?firstname="+ first_name + "&lastname=" + last_name
-                            +"&pathername=" + father_name;
+                    String url = "http://localhost:8080/cc/full name/num" + "?firstname=" + first_name + "&lastname=" + last_name
+                            + "&pathername=" + father_name;
                     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
                     System.out.println(responseEntity.getBody());
                 }
@@ -367,7 +374,7 @@ public class ClientApp {
                             "\"passportNum\": \"" + passport_number + "\"\n" +
                             "}", headers);
                     ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully added");
                     }
                 }
@@ -380,7 +387,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("The client has been deleted successfully");
                     }
                 }
@@ -414,15 +421,15 @@ public class ClientApp {
                     String days = in.nextLine();
 
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/btc/update/"+ id + "/days?days_count=" + days;
+                    String url = "http://localhost:8080/btc/update/" + id + "/days?days_count=" + days;
                     CloseableHttpClient httpClient = HttpClientBuilder.create().build();
                     restTemplate.setRequestFactory(new
                             HttpComponentsClientHttpRequestFactory(httpClient));
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
-                    ResponseEntity<String> responseEntity=restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully updated");
                     }
                 }
@@ -433,15 +440,15 @@ public class ClientApp {
                     String count = in.nextLine();
 
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/btc/update/"+ id + "/cnt?cnt=" + count;
+                    String url = "http://localhost:8080/btc/update/" + id + "/cnt?cnt=" + count;
                     CloseableHttpClient httpClient = HttpClientBuilder.create().build();
                     restTemplate.setRequestFactory(new
                             HttpComponentsClientHttpRequestFactory(httpClient));
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
-                    ResponseEntity<String> responseEntity=restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully updated");
                     }
                 }
@@ -467,9 +474,10 @@ public class ClientApp {
                             "\"dayCount\": \"" + day_count + "\"\n" +
                             "}", headers);
                     ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully added");
-                    }}
+                    }
+                }
                 if (str.equals("delete_book_type")) {
                     System.out.print("Enter name: ");
                     String name = in.nextLine();
@@ -479,7 +487,7 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("The book type has been deleted successfully");
                     }
                 }
@@ -514,8 +522,8 @@ public class ClientApp {
                     System.out.print("Enter father name: ");
                     String father_name = in.nextLine();
                     RestTemplate restTemplate = new RestTemplate();
-                    String url = "http://localhost:8080/bc/search_client_book" + "?firstname="+ first_name + "&lastname=" + last_name
-                            +"&pathername=" + father_name;
+                    String url = "http://localhost:8080/bc/search_client_book" + "?firstname=" + first_name + "&lastname=" + last_name
+                            + "&pathername=" + father_name;
                     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
                     System.out.println(responseEntity.getBody());
                 }
@@ -533,8 +541,8 @@ public class ClientApp {
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
-                    ResponseEntity<String> responseEntity=restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PATCH, request, String.class);
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully updated");
                     }
                 }
@@ -555,10 +563,10 @@ public class ClientApp {
                             "\"name\": \"" + name + "\",\n" +
                             "\"cnt\": \"" + book_count + "\",\n" +
                             "\"type\":" + "{\n" +
-                                "\"id\": \"" + id + "\"\n" + "}\n" +
+                            "\"id\": \"" + id + "\"\n" + "}\n" +
                             "}", headers);
                     ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("Successfully added");
                     }
                 }
@@ -571,13 +579,19 @@ public class ClientApp {
                     headers.add("Authorization", "Bearer " + token);
                     HttpEntity<String> request = new HttpEntity<>(headers);
                     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
-                    if (responseEntity.getStatusCode().toString().equals("200 OK")){
+                    if (responseEntity.getStatusCode().toString().equals("200 OK")) {
                         System.out.println("The book has been deleted successfully");
                     }
                 }
             }
             catch (HttpClientErrorException e) {
                 e.getResponseBodyAsString();
+            }
+            catch (ResourceAccessException e) {
+                System.err.println("Access denied");
+            }
+            catch (JwtException e) {
+                System.err.println(e.getMessage());
             }
         }
     }

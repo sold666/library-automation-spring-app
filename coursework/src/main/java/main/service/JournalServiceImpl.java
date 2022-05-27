@@ -1,5 +1,6 @@
 package main.service;
 
+import main.repository.BooksRepository;
 import main.repository.JournalRepository;
 import main.tables.Books;
 import main.tables.Clients;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.awt.print.Book;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,9 @@ public class JournalServiceImpl implements JournalService {
 
     @Autowired
     private JournalRepository journalRepository;
+
+    @Autowired
+    private BooksRepository booksRepository;
 
     @Override
     public List<Journal> listJournals() {
@@ -45,6 +50,15 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public Journal addJournal(Journal journal) {
+        final Optional<Books> books = booksRepository.findById(journal.getBook().getId());
+        if (books.isEmpty()) {
+            return journalRepository.save(journal);
+        }
+        int delta = books.get().getCnt() - journal.getBook().getCnt();
+        if (delta < 0) {
+            throw new EntityNotFoundException("Too few books!");
+        }
+        booksRepository.updateCntById(delta, journal.getBook().getId());
         return journalRepository.save(journal);
     }
     @Override
@@ -67,9 +81,9 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public void deleteJournalById(Integer id) {
-        if (!journalRepository.existsById(id)) {
-            throw new EntityExistsException("Journal with this id: " + id + ",does not exist");
-        }
+        final Journal journal = journalRepository.findById(id).orElseThrow(() ->  new EntityExistsException("Journal with this id: " + id + ",does not exist"));
+        final Books book = booksRepository.findByName(journal.getBook().getName()).get(0);
+        booksRepository.updateCntById(book.getCnt() + journal.getBook().getCnt(), book.getId());
         journalRepository.deleteById(id);
     }
 }

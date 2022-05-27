@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.platform.commons.logging.Logger;
+import org.junit.platform.commons.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -73,9 +75,17 @@ public class JournalController {
 
     @PostMapping(value = "/add journal", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Journal addJournal(@RequestBody Journal newJournal) {
-        booksService.addBook(newJournal.getBook());
-        clientsService.addClients(newJournal.getClient());
-        return journalService.addJournal(newJournal);
+        if (booksService.findByName(newJournal.getBook().getName()).isEmpty()) {
+            booksService.addBook(newJournal.getBook());
+        }
+        if (!clientsService.existsByPassportSeriaAndPassportNum(newJournal.getClient().getPassportSeria(), newJournal.getClient().getPassportNum())) {
+            clientsService.addClients(newJournal.getClient());
+        }
+        try {
+            return journalService.addJournal(newJournal);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
     }
 
     @PatchMapping("/update/{id}/date")
