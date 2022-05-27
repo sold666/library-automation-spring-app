@@ -4,7 +4,7 @@ import main.tables.Books;
 import main.tables.Clients;
 import main.tables.Journal;
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 public interface JournalService {
@@ -19,7 +19,7 @@ public interface JournalService {
 
     Journal addJournal(Journal journal);
 
-    int updateDateEndById(Instant dateEnd, Integer id);
+    int updateDateEndById(Date dateEnd, Integer id);
 
     boolean existsByClient(Clients client);
 

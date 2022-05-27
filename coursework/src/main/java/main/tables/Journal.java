@@ -1,16 +1,18 @@
 package main.tables;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Cascade;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.Date;
 
 @Entity(name = "journal")
 @Table(name = "journal")
 public class Journal {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -23,18 +25,21 @@ public class Journal {
     private Clients client;
 
     @Column(name = "date_beg")
-    private Instant dateBeg;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dateBeg;
 
     @Column(name = "date_end")
-    private Instant dateEnd;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dateEnd;
 
     @Column(name = "date_ret")
-    private Instant dateRet;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dateRet;
 
     public Journal() {
     }
 
-    public Journal(Books book, Clients client, Instant dateBeg, Instant dateEnd, Instant dateRet) {
+    public Journal(Books book, Clients client, Date dateBeg, Date dateEnd, Date dateRet) {
         this.book = book;
         this.client = client;
         this.dateBeg = dateBeg;
@@ -42,27 +47,27 @@ public class Journal {
         this.dateRet = dateRet;
     }
 
-    public Instant getDateRet() {
+    public Date getDateRet() {
         return dateRet;
     }
 
-    public void setDateRet(Instant dateRet) {
+    public void setDateRet(Date dateRet) {
         this.dateRet = dateRet;
     }
 
-    public Instant getDateEnd() {
+    public Date getDateEnd() {
         return dateEnd;
     }
 
-    public void setDateEnd(Instant dateEnd) {
+    public void setDateEnd(Date dateEnd) {
         this.dateEnd = dateEnd;
     }
 
-    public Instant getDateBeg() {
+    public Date getDateBeg() {
         return dateBeg;
     }
 
-    public void setDateBeg(Instant dateBeg) {
+    public void setDateBeg(Date dateBeg) {
         this.dateBeg = dateBeg;
     }
 

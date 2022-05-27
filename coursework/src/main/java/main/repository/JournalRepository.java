@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 public interface JournalRepository extends CrudRepository<Journal, Integer> {
@@ -22,7 +22,7 @@ public interface JournalRepository extends CrudRepository<Journal, Integer> {
     @Transactional
     @Modifying
     @Query("update journal j set j.dateEnd = ?1 where j.id = ?2")
-    int updateDateEndById(Instant dateEnd, Integer id);
+    int updateDateEndById(Date dateEnd, Integer id);
 
     @Query("select (count(j) > 0) from journal j where j.client = ?1")
     boolean existsByClient(Clients client);

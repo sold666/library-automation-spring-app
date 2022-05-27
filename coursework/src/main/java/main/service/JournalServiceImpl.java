@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +48,7 @@ public class JournalServiceImpl implements JournalService {
         return journalRepository.save(journal);
     }
     @Override
-    public int updateDateEndById(Instant dateEnd, Integer id) {
+    public int updateDateEndById(Date dateEnd, Integer id) {
         return journalRepository.updateDateEndById(dateEnd, id);
     }
 

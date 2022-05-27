@@ -7,6 +7,9 @@ import main.tables.Books;
 import main.tables.Clients;
 import main.tables.Journal;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -76,8 +79,9 @@ public class JournalController {
     }
 
     @PatchMapping("/update/{id}/date")
-    public ResponseEntity<Integer> updateJournalDateEnd(@PathVariable("id") Integer id, @RequestParam(value = "date") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date dateEnd) {
-        return new ResponseEntity<>(journalService.updateDateEndById(dateEnd.toInstant(), id), HttpStatus.OK);
+    public ResponseEntity<Integer> updateJournalDateEnd(@PathVariable("id") Integer id, @RequestParam String dateEnd) throws ParseException {
+        DateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return new ResponseEntity<>(journalService.updateDateEndById(date.parse(dateEnd), id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
