@@ -11,6 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>coursework</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>coursework</name>
     <description>coursework</description>
     <properties>

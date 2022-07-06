@@ -16,10 +16,13 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
+import main.SpringServer;
 
 public class ClientApp {
 
     public static void main(String[] args) throws ParseException {
+        SpringServer springServer = new SpringServer();
+        springServer.startSpringServer();
         Scanner in = new Scanner(System.in);
         String token = "";
         System.out.print("Hi! This is a client created to process your requests, to find out what I can do, enter: help\n");
